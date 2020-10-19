@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDto } from '../dto/create.dto';
 import { UserRepository } from '../repository/user.repository';
@@ -19,15 +19,18 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { username } })
   }
 
-  async createUser(createDto: CreateDto) {
+  async createUser(createDto: CreateDto): Promise<any> {
     const user = this.userRepository.create(createDto)
 
     try {
       await user.save()
-      return user
+      // eslint-disable-next-line
+      const { password, ...result } = user
+      return result
     } 
     catch (error) {
-      throw new BadRequestException()
+      if (error.code === '23505') throw new ConflictException()
+      else throw new BadRequestException()
     }
   }
 }

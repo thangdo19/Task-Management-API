@@ -10,13 +10,13 @@ import { PassportModule } from '@nestjs/passport';
 @Module({
   imports: [
     JwtModule.register({
-      secret: config.get('jwt.secret'),
+      secret: config.get('jwt.secret') || process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: config.get('jwt.expiresIn')
+        expiresIn: config.get('jwt.expiresIn') || process.env.JWT_EXPIRES
       }
     }),
-    UsersModule,
-    PassportModule.register({ defaultStrategy: 'local' })
+    PassportModule.register({ defaultStrategy: 'local' }),
+    UsersModule
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy]

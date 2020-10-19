@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateDto } from 'src/app/users/dto/create.dto';
 import { User } from 'src/common/decorators/user.decorator';
@@ -11,8 +11,12 @@ export class AuthController {
   ) {}
 
   @Post('/signup')
-  signUp(@Body() createDto: CreateDto) {
-    return this.authService.signUp(createDto)
+  @HttpCode(201)
+  async signUp(@Body() createDto: CreateDto): Promise<any> {
+    return {
+      statusCode: 201,
+      data: { token: await this.authService.signUp(createDto) }
+    }
   }
 
   @UseGuards(AuthGuard('local'))

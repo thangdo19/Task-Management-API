@@ -10,8 +10,9 @@ export class AuthService {
     private usersService: UsersService
   ) {}
 
-  signUp(createDto: CreateDto) {
-    return this.usersService.createUser(createDto)
+  async signUp(createDto: CreateDto) {
+    const { id, username } = await this.usersService.createUser(createDto)
+    return this.jwtService.sign({ id, username })
   }
 
   // signIn() {
@@ -21,9 +22,8 @@ export class AuthService {
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.getUserByUsername(username);
     if (user && user.password === password) {
+      // eslint-disable-next-line
       const { password, ...result } = user;
-      console.log('password', password)
-      console.log('result', result)
       return result;
     }
     return null;
