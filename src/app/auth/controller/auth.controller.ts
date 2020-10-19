@@ -19,9 +19,13 @@ export class AuthController {
     }
   }
 
-  @UseGuards(AuthGuard('local'))
   @Post('/signin')
-  signIn(@User() user) {
-    return user
+  @UseGuards(AuthGuard('local'))
+  @HttpCode(200)
+  async signIn(@User() partialUser: any) {
+    return {
+      statusCode: 200,
+      data: { token: await this.authService.signIn(partialUser) }
+    }
   }
 }

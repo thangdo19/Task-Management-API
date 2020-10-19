@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDto } from '../dto/create.dto';
 import { UserRepository } from '../repository/user.repository';
 import { User } from '../user.entity';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class UsersService {
@@ -20,6 +21,7 @@ export class UsersService {
   }
 
   async createUser(createDto: CreateDto): Promise<any> {
+    createDto.password = await this.hashString(createDto.password)
     const user = this.userRepository.create(createDto)
 
     try {
@@ -32,5 +34,9 @@ export class UsersService {
       if (error.code === '23505') throw new ConflictException()
       else throw new BadRequestException()
     }
+  }
+
+  private async hashString(anyString: string): Promise<string> {
+    return await bcrypt.hash(anyString, await bcrypt.genSalt())
   }
 }
