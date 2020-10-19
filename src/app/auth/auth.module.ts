@@ -1,11 +1,12 @@
+import * as config from 'config'
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './controller/auth.controller';
 import { AuthService } from './service/auth.service';
-import * as config from 'config'
 import { UsersModule } from '../users/users.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -15,10 +16,11 @@ import { PassportModule } from '@nestjs/passport';
         expiresIn: config.get('jwt.expiresIn') || process.env.JWT_EXPIRES
       }
     }),
-    PassportModule.register({ defaultStrategy: 'local' }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     UsersModule
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy]
+  providers: [AuthService, LocalStrategy, JwtStrategy],
+  exports: [JwtStrategy]
 })
 export class AuthModule {}
