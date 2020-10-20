@@ -6,7 +6,7 @@ import { Task } from "../task.entity";
 
 @EntityRepository(Task)
 export class TaskRepository extends Repository<Task> {
-  async getTasks(filterDto: GetTaskFilterDto): Promise<Task[]> {
+  async getTasks(filterDto: GetTaskFilterDto, userId: number): Promise<Task[]> {
     const { search, status } = filterDto
     const query = this.createQueryBuilder('task')
 
@@ -19,6 +19,7 @@ export class TaskRepository extends Repository<Task> {
       query.andWhere('task.status = :status', { status })
     }
 
+    query.andWhere('task.userId = :userId', { userId })
     return await query.getMany()
   }
 
@@ -29,10 +30,10 @@ export class TaskRepository extends Repository<Task> {
     return task
   }
 
-  async createTask(createDto: CreateTaskDto): Promise<Task> {
+  async createTask(createDto: CreateTaskDto, userId: number): Promise<Task> {
     const task: Task = this.create(createDto)
-    await task.save()
-
-    return task
+    task.userId = userId
+    
+    return await task.save()
   }
 }

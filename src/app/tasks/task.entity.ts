@@ -1,5 +1,6 @@
 import { IsIn, IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "../users/user.entity";
 import { TaskStatus } from "./task-status.enum";
 
 @Entity()
@@ -22,4 +23,13 @@ export class Task extends BaseEntity {
   @IsIn(Object.values(TaskStatus))
   @Column()
   status: TaskStatus
+
+  // eslint-disable-next-line
+  @ManyToOne(type => User, user => user.tasks, { eager: false })
+  user: User
+
+  @Column({ 
+    type: 'number'
+  })
+  userId: number
 }

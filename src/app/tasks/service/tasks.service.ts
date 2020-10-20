@@ -12,15 +12,15 @@ export class TasksService {
     private taskRepository: TaskRepository
   ) {}
 
-  getTasks(filterDto: GetTaskFilterDto): Promise<Task[]> {
-    return this.taskRepository.getTasks(filterDto)
+  getTasks(filterDto: GetTaskFilterDto, userId: number): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto, userId)
   }
 
   getTaskById(id: number): Promise<Task> {
     return this.taskRepository.getTaskById(id)
   }
 
-  createTask(createDto: CreateTaskDto): Promise<Task> {
-    return this.taskRepository.createTask(createDto)
+  createTask(createDto: CreateTaskDto, userId: number): Promise<Task> {
+    return this.taskRepository.createTask(createDto, userId)
   }
 }
